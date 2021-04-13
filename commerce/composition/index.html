@@ -20,40 +20,7 @@
             </div>
         </header>
         <main>
-            <section class="product">
-                <div class="product__thumbnails">
-                    <div
-                        v-for="(image, index) in product.images"
-                        :key="image.thumbnail"
-                        class="thumb" 
-                        :class="{ active: activeImage == index }" 
-                        :style="{ backgroundImage: 'url(' + product.images[index].thumbnail + ')' }"
-                        @click="activeImage = index"
-                    ></div>
-                </div>
-                <div class="product__image">
-                    <img :src="product.images[activeImage].image" :alt="product.name" />
-                </div>
-            </section>
-            <section class="description">
-                <h4>{{ product.name.toUpperCase() }} {{ product.stock == 0 ? ":(" : ":)"}}</h4>
-                <span class="badge new" v-if="product.new">Nuevo</span>
-                <span class="badge offer" v-if="product.offer">Oferta</span>
-                <p class="description__status" v-if="product.stock == 3">Quedan pocas unidades!</p>
-                <p class="description__status" v-else-if="product.stock == 2">El producto está por terminarse!</p>
-                <p class="description__status" v-else-if="product.stock == 1">Ultima unidad disponoble!</p>
-                <p class="description__price">$ {{ new Intl.NumberFormat("es-MX").format(product.price) }}</p>
-                <p class="description__content"></p>
-                <div class="discount">
-                    <span>Código de Descuento!</span>
-                    <input 
-                        type="text" 
-                        placeholder="Ingresa tu codigo" 
-                        @keyup.enter="applyDiscount($event)" 
-                    />
-                </div>
-                <button :disabled="product.stock == 0" @click="addToCart()">Agregar al carrito</button>
-            </section>
+            <product v-for="product in products" :key="product.name" :product="product"/>
         </main>
     </div>
 
@@ -63,10 +30,48 @@
 
         const app = createApp({
             setup() {
-                const productState = reactive({
-                    product: {
+                const products = ref([
+                    {
                         name: "Camara",
                         price: 450.000,
+                        stock: 5,
+                        content: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam porro corrupti esse dicta fugiat magnam vel minima cum at? Deserunt praesentium nesciunt deleniti similique magni ducimus sunt facere eum iste!`,
+                        images: [
+                            {
+                                image: "./images/camara.jpg",
+                                thumbnail: "./images/camara-thumb.jpg"
+                            },
+                            {
+                                image: "./images/camara-2.jpg",
+                                thumbnail: "./images/camara-2-thumb.jpg"
+                            }
+                        ],
+                        new: true,
+                        offer: true,
+                        quantity: 1
+                    },
+                    {
+                        name: "Camara PL",
+                        price: 250.000,
+                        stock: 2,
+                        content: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam porro corrupti esse dicta fugiat magnam vel minima cum at? Deserunt praesentium nesciunt deleniti similique magni ducimus sunt facere eum iste!`,
+                        images: [
+                            {
+                                image: "./images/camara.jpg",
+                                thumbnail: "./images/camara-thumb.jpg"
+                            },
+                            {
+                                image: "./images/camara-2.jpg",
+                                thumbnail: "./images/camara-2-thumb.jpg"
+                            }
+                        ],
+                        new: true,
+                        offer: true,
+                        quantity: 1
+                    },
+                    {
+                        name: "Camara PL2",
+                        price: 550.000,
                         stock: 3,
                         content: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam porro corrupti esse dicta fugiat magnam vel minima cum at? Deserunt praesentium nesciunt deleniti similique magni ducimus sunt facere eum iste!`,
                         images: [
@@ -83,43 +88,41 @@
                         offer: true,
                         quantity: 1
                     },
-                    activeImage: 0
-                })
-                
+                    {
+                        name: "Camara PL3",
+                        price: 650.000,
+                        stock: 3,
+                        content: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam porro corrupti esse dicta fugiat magnam vel minima cum at? Deserunt praesentium nesciunt deleniti similique magni ducimus sunt facere eum iste!`,
+                        images: [
+                            {
+                                image: "./images/camara.jpg",
+                                thumbnail: "./images/camara-thumb.jpg"
+                            },
+                            {
+                                image: "./images/camara-2.jpg",
+                                thumbnail: "./images/camara-2-thumb.jpg"
+                            }
+                        ],
+                        new: true,
+                        offer: true,
+                        quantity: 1
+                    }
+                ])
+
                 const cartState = reactive({
                     cartOpen: false,
                     cart: []
                 })
-
-                //const cartOpen = ref(false)
-                //const cart = ref([])
-                function addToCart() {
-                    const prodIndex = cartState.cart.findIndex(prod => prod.name === productState.product.name)
-                    if(prodIndex >= 0) {
-                        cartState.cart[prodIndex].quantity += 1
-                    } else {
-                        cartState.cart.push(productState.product)
-                    }
-                    productState.product.stock -= 1
-                }
-
-                const discountCodes = ref(["Frida", "Daniela"])
-                function applyDiscount(event) {
-                    const discountCodeIndex = discountCodes.value.indexOf(event.target.value)
-                    if(discountCodeIndex >= 0) {
-                        productState.product.price *= 50/100
-                        discountCodes.value.splice(discountCodeIndex, 1)
-                    }
-                }
                 
                 return {
-                    ...toRefs(productState),
                     ...toRefs(cartState),
-                    addToCart,
-                    applyDiscount
+                    products
                 }
             }
         })
+    </script>
+    <script src="./Product.js"></script>
+    <script>
         app.mount("#app")
     </script>
 </body>
